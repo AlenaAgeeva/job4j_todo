@@ -1,3 +1,5 @@
+package todo;
+
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
@@ -14,6 +16,7 @@ public class Main {
                 .configure().build();
         return new MetadataSources(registry).buildMetadata().buildSessionFactory();
     }
+
     public static void main(String[] args) {
         SpringApplication.run(Main.class, args);
     }
