@@ -10,6 +10,8 @@ public interface TaskRepository {
 
     boolean deleteById(int id);
 
+    void deleteAll();
+
     boolean update(Task task);
 
     boolean markDone(Task task);

@@ -14,9 +14,35 @@
 
     <title>TODO Tasks List</title>
 </head>
-<body>
 <div class="container-fluid p-0">
-    <h1>Hello TODO</h1>
+    <header th:insert="blocks/header :: header"></header>
+    <div class="container">
+        <div class="row">
+            <table class="table table-hover table-bordered">
+                <thead class="table-light">
+                <tr>
+                    <th scope="col">Number</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Status</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="task: ${tasks}">
+                    <td th:text="${task.id}"/>
+                    <td th:text="${task.name}"/>
+                    <td th:text="${task.created}"/>
+                    <td th:text="${task.done}"/>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="text-center">
+        <button type="button" class="rounded-5 btn btn-success btn-lg btn-block">Add Task</button>
+        <button type="button" class="rounded-5 btn btn-danger btn-lg btn-block">Clear All</button>
+    </div>
+    <footer th:insert="blocks/footer :: footer"></footer>
 </div>
 </body>
 </html>
