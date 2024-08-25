@@ -25,10 +25,6 @@ public class SimpleTaskService implements TaskService {
         return taskRepository.deleteById(id);
     }
 
-    public void deleteAll() {
-        taskRepository.deleteAll();
-    }
-
     @Override
     public boolean update(Task task) {
         return taskRepository.update(task);

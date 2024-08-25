@@ -60,25 +60,6 @@ public class HibernateTaskRepository implements TaskRepository {
     }
 
     @Override
-    public void deleteAll() {
-        Session session = sf.openSession();
-        Transaction transaction = session.beginTransaction();
-        try {
-            session.createQuery("delete Task", Task.class)
-                    .executeUpdate();
-            transaction.commit();
-        } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-        } finally {
-            if (session != null) {
-                session.close();
-            }
-        }
-    }
-
-    @Override
     public boolean update(Task task) {
         Session session = sf.openSession();
         Transaction transaction = session.beginTransaction();
