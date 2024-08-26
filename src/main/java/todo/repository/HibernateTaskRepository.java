@@ -42,7 +42,7 @@ public class HibernateTaskRepository implements TaskRepository {
         Session session = sf.openSession();
         Transaction transaction = session.beginTransaction();
         try {
-            session.createQuery("delete Task where id = :fId", Task.class)
+            session.createQuery("delete from Task where id = :fId")
                     .setParameter("fId", id)
                     .executeUpdate();
             transaction.commit();

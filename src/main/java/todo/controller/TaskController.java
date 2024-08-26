@@ -5,11 +5,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import todo.model.Task;
 import todo.service.SimpleTaskService;
+import todo.service.TaskService;
 
 @Controller
 @RequestMapping("/tasks")
 public class TaskController {
-    private SimpleTaskService taskService;
+    private TaskService taskService;
 
     public TaskController(SimpleTaskService taskService) {
         this.taskService = taskService;
@@ -17,19 +18,28 @@ public class TaskController {
 
     @GetMapping("/done")
     public String getAllDone(Model model) {
-        model.addAttribute("tasks", taskService.findByStatus(true));
-        return "tasks/list";
+        try {
+            model.addAttribute("tasks", taskService.findByStatus(true));
+            return "tasks/list";
+        } catch (Exception exception) {
+            model.addAttribute("message", exception.getMessage());
+            return "errors/404";
+        }
     }
 
     @GetMapping("/new")
     public String getAllNew(Model model) {
-        model.addAttribute("tasks", taskService.findByStatus(false));
-        return "tasks/list";
+        try {
+            model.addAttribute("tasks", taskService.findByStatus(false));
+            return "tasks/list";
+        } catch (Exception exception) {
+            model.addAttribute("message", exception.getMessage());
+            return "errors/404";
+        }
     }
 
     @GetMapping("/create")
-    public String getCreationPage(Model model) {
-        model.addAttribute("tasks", taskService.findAll());
+    public String getCreationPage() {
         return "tasks/create";
     }
 
@@ -37,7 +47,6 @@ public class TaskController {
     public String createTask(@ModelAttribute("Task") Task task, Model model) {
         try {
             taskService.save(task);
-            model.addAttribute("tasks", taskService.findAll());
             return "redirect:/";
         } catch (Exception exception) {
             model.addAttribute("message", exception.getMessage());
@@ -69,5 +78,15 @@ public class TaskController {
             model.addAttribute("message", exception.getMessage());
             return "errors/404";
         }
+    }
+
+    @GetMapping("/delete/{id}")
+    public String delete(@PathVariable int id, Model model) {
+        var isDeleted = taskService.deleteById(id);
+        if (!isDeleted) {
+            model.addAttribute("message", "Task is not found");
+            return "errors/404";
+        }
+        return "redirect:/";
     }
 }
