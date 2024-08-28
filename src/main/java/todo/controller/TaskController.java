@@ -18,24 +18,14 @@ public class TaskController {
 
     @GetMapping("/done")
     public String getAllDone(Model model) {
-        try {
-            model.addAttribute("tasks", taskService.findByStatus(true));
-            return "tasks/list";
-        } catch (Exception exception) {
-            model.addAttribute("message", exception.getMessage());
-            return "errors/404";
-        }
+        model.addAttribute("tasks", taskService.findByStatus(true));
+        return "tasks/list";
     }
 
     @GetMapping("/new")
     public String getAllNew(Model model) {
-        try {
-            model.addAttribute("tasks", taskService.findByStatus(false));
-            return "tasks/list";
-        } catch (Exception exception) {
-            model.addAttribute("message", exception.getMessage());
-            return "errors/404";
-        }
+        model.addAttribute("tasks", taskService.findByStatus(false));
+        return "tasks/list";
     }
 
     @GetMapping("/create")
@@ -44,14 +34,9 @@ public class TaskController {
     }
 
     @PostMapping("/create")
-    public String createTask(@ModelAttribute("Task") Task task, Model model) {
-        try {
-            taskService.save(task);
-            return "redirect:/";
-        } catch (Exception exception) {
-            model.addAttribute("message", exception.getMessage());
-            return "errors/404";
-        }
+    public String createTask(@ModelAttribute("Task") Task task) {
+        taskService.save(task);
+        return "redirect:/";
     }
 
     @GetMapping("/{id}")
@@ -67,24 +52,29 @@ public class TaskController {
 
     @PostMapping("/update")
     public String update(@ModelAttribute Task task, Model model) {
-        try {
-            var isUpdated = taskService.update(task);
-            if (!isUpdated) {
-                model.addAttribute("message", "Task is not found");
-                return "errors/404";
-            }
-            return "redirect:/";
-        } catch (Exception exception) {
-            model.addAttribute("message", exception.getMessage());
+        var isUpdated = taskService.update(task);
+        if (!isUpdated) {
+            model.addAttribute("message", "Task with id=" + task.getId() + " is not found");
             return "errors/404";
         }
+        return "redirect:/";
     }
 
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable int id, Model model) {
         var isDeleted = taskService.deleteById(id);
         if (!isDeleted) {
-            model.addAttribute("message", "Task is not found");
+            model.addAttribute("message", "Task with id=" + id + " is not found");
+            return "errors/404";
+        }
+        return "redirect:/";
+    }
+
+    @PostMapping("/complete")
+    public String markFinished(@ModelAttribute Task task, Model model) {
+        var isDone = taskService.markDone(task);
+        if (!isDone) {
+            model.addAttribute("message", "Task with id=" + task.getId() + " is not found");
             return "errors/404";
         }
         return "redirect:/";

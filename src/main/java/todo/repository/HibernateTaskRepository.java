@@ -41,12 +41,13 @@ public class HibernateTaskRepository implements TaskRepository {
     public boolean deleteById(int id) {
         Session session = sf.openSession();
         Transaction transaction = session.beginTransaction();
+        boolean result = false;
         try {
-            session.createQuery("delete from Task where id = :fId")
+            result = session.createQuery("delete Task where id = :fId")
                     .setParameter("fId", id)
-                    .executeUpdate();
+                    .executeUpdate() > 0;
             transaction.commit();
-            return true;
+            return result;
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
@@ -56,7 +57,7 @@ public class HibernateTaskRepository implements TaskRepository {
                 session.close();
             }
         }
-        return false;
+        return result;
     }
 
     @Override
@@ -83,14 +84,15 @@ public class HibernateTaskRepository implements TaskRepository {
     public boolean markDone(Task task) {
         Session session = sf.openSession();
         Transaction transaction = session.beginTransaction();
+        boolean result = false;
         try {
-            session.createQuery(
+            result = session.createQuery(
                             "update Task set done = :fDone where id = :fId")
                     .setParameter("fDone", true)
                     .setParameter("fId", task.getId())
-                    .executeUpdate();
+                    .executeUpdate() > 0;
             transaction.commit();
-            return true;
+            return result;
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
@@ -100,7 +102,7 @@ public class HibernateTaskRepository implements TaskRepository {
                 session.close();
             }
         }
-        return false;
+        return result;
     }
 
     @Override

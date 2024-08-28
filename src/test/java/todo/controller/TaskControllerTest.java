@@ -52,19 +52,8 @@ class TaskControllerTest {
                 LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), false);
         var model = new ConcurrentModel();
         when(taskService.save(task)).thenReturn(task);
-        var viewName = taskController.createTask(task, model);
+        var viewName = taskController.createTask(task);
         assertThat(viewName).isEqualTo("redirect:/");
-    }
-
-    @Test
-    void whenCreateTaskFailure() {
-        var task = new Task(1, "title1", "text1",
-                LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), false);
-        var model = new ConcurrentModel();
-        when(taskService.save(task)).thenThrow(new RuntimeException("Error saving task"));
-        var viewName = taskController.createTask(task, model);
-        assertThat(viewName).isEqualTo("errors/404");
-        assertThat(model.getAttribute("message")).isEqualTo("Error saving task");
     }
 
     @Test
@@ -124,17 +113,6 @@ class TaskControllerTest {
         when(taskService.update(task)).thenReturn(false);
         var viewName = taskController.update(task, model);
         assertThat(viewName).isEqualTo("errors/404");
-        assertThat(model.getAttribute("message")).isEqualTo("Task is not found");
-    }
-
-    @Test
-    void whenUpdateThenShouldReturnErrorPageOnException() {
-        var task = new Task(1, "title1", "text1",
-                LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), false);
-        var model = new ConcurrentModel();
-        when(taskService.update(any(Task.class))).thenThrow(new RuntimeException("Update failed"));
-        var viewName = taskController.update(task, model);
-        assertThat(viewName).isEqualTo("errors/404");
-        assertThat(model.getAttribute("message")).isEqualTo("Update failed");
+        assertThat(model.getAttribute("message")).isEqualTo("Task with id=1 is not found");
     }
 }

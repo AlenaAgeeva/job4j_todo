@@ -33,25 +33,20 @@
                                th:field="*{description}"
                                placeholder="">
                     </div>
-                    <div class="form-check mb-3">
-                        <input type="checkbox" name="done" class="form-check-input" id="done"
-                               th:field="*{done}">
-                        <label class="form-check-label" for="done">Done</label>
-                    </div>
                 </div>
             </div>
-            <div class="mb-3 row">
-                <div class="col-6"></div>
-                <div class="col-6">
-                    <div class="row">
-                        <div class="col-4"><a class="btn btn-light w-100" th:href="@{/}">Cancel</a></div>
-                        <div class="col-4"><a class="btn btn-danger w-100"
-                                              th:href="@{/tasks/delete/{id}(id=${task.id})}">Delete</a></div>
-                        <div class="col-4">
-                            <button class="btn btn-success w-100" type="submit">Update</button>
-                        </div>
-                    </div>
+            <div class="row my-4">
+                <div class="col-3">
+                    <button class="btn btn-success w-100" type="submit" th:formaction="@{/tasks/complete}">Complete
+                    </button>
                 </div>
+                <div class="col-3">
+                    <button class="btn btn-primary w-100" type="submit">Update</button>
+                </div>
+                <div class="col-3">
+                    <a class="btn btn-danger w-100" th:href="@{/tasks/delete/{id}(id=${task.id})}">Delete</a>
+                </div>
+                <div class="col-3"><a class="btn btn-secondary w-100" th:href="@{/}">Cancel</a></div>
             </div>
         </form>
     </div>
