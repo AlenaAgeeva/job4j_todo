@@ -29,6 +29,7 @@ of tasks, modifying tasks, and tracking their status.
 - - src/main/resources/hibernate.cfg.xml 
 - Before starting, run the command liquibase:update.
 - Run the main method. -Open the browser at http://localhost:8080/.
+- For user log in demonstration use credential "admin" as a login and "admin" as a password.
 
 ### All tasks
 

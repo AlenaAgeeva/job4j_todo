@@ -9,9 +9,13 @@
                     <a class="nav-item nav-link" th:href="@{/tasks/create}">Add Task</a>
                 </div>
             </div>
-            <div class="d-flex" >
+            <div class="d-flex" th:if="${user.name == 'Guest'}">
                 <a class="btn btn-outline-info active me-3 " th:href="@{/users/register}">Sign Up</a>
                 <a class="btn btn-outline-light active" th:href="@{/users/login}">Log In</a>
+            </div>
+            <div class="d-flex" th:if="${user.name != 'Guest'}">
+                <a class="btn btn-info me-3" th:text="${user.name}"></a>
+                <a class="btn btn-outline-warning active" th:href="@{/users/logout}">Log Out</a>
             </div>
         </div>
     </nav>

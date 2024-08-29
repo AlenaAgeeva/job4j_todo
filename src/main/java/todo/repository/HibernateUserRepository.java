@@ -25,28 +25,30 @@ public class HibernateUserRepository implements UserRepository {
         try {
             session.save(user);
             transaction.commit();
+            return Optional.of(user);
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
             }
+            return Optional.empty();
         } finally {
             if (session != null) {
                 session.close();
             }
         }
-        return Optional.of(user);
     }
 
     @Override
     public Optional<User> findByEmailAndPassword(String email, String password) {
         Session session = sf.openSession();
         Transaction transaction = session.beginTransaction();
+        Optional<User> result = Optional.empty();
         try {
-            Query<User> query = session.createQuery("from User where email = :fEmail and password = :fPass", User.class)
+            result = session.createQuery("from User where email = :fEmail and password = :fPass", User.class)
                     .setParameter("fEmail", email)
-                    .setParameter("fPass", password);
+                    .setParameter("fPass", password).uniqueResultOptional();
             transaction.commit();
-            return query.uniqueResultOptional();
+            return result;
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
@@ -56,7 +58,7 @@ public class HibernateUserRepository implements UserRepository {
                 session.close();
             }
         }
-        return Optional.empty();
+        return result;
     }
 
     @Override
