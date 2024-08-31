@@ -50,7 +50,6 @@ class TaskControllerTest {
     void whenCreateTaskSuccessfully() {
         var task = new Task(1, "title1", "text1",
                 LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), false);
-        var model = new ConcurrentModel();
         when(taskService.save(task)).thenReturn(task);
         var viewName = taskController.createTask(task);
         assertThat(viewName).isEqualTo("redirect:/");

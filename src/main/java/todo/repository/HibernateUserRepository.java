@@ -1,128 +1,57 @@
 package todo.repository;
 
 import lombok.AllArgsConstructor;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 import todo.model.User;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Repository
 @AllArgsConstructor
 public class HibernateUserRepository implements UserRepository {
-    private final SessionFactory sf;
+    private final CrudRepository crudRepository;
 
     @Override
     public Optional<User> save(User user) {
-        Session session = sf.openSession();
-        Transaction transaction = session.beginTransaction();
         try {
-            session.save(user);
-            transaction.commit();
+            crudRepository.run(session -> session.save(user));
             return Optional.of(user);
         } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            return Optional.empty();
-        } finally {
-            if (session != null) {
-                session.close();
-            }
-        }
-    }
-
-    @Override
-    public Optional<User> findByEmailAndPassword(String email, String password) {
-        Session session = sf.openSession();
-        Transaction transaction = session.beginTransaction();
-        Optional<User> result = Optional.empty();
-        try {
-            result = session.createQuery("from User where email = :fEmail and password = :fPass", User.class)
-                    .setParameter("fEmail", email)
-                    .setParameter("fPass", password).uniqueResultOptional();
-            transaction.commit();
-            return result;
-        } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-        } finally {
-            if (session != null) {
-                session.close();
-            }
-        }
-        return result;
-    }
-
-    @Override
-    public Optional<User> findById(int id) {
-        Session session = sf.openSession();
-        Transaction transaction = session.beginTransaction();
-        try {
-            Query<User> query = session.createQuery("from User where id = :fId", User.class)
-                    .setParameter("fId", id);
-            transaction.commit();
-            return query.uniqueResultOptional();
-        } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-        } finally {
-            if (session != null) {
-                session.close();
-            }
+            e.printStackTrace();
         }
         return Optional.empty();
     }
 
     @Override
+    public Optional<User> findByEmailAndPassword(String email, String password) {
+        return crudRepository.optional("from User where email = :fEmail and password = :fPass",
+                User.class,
+                Map.of("fEmail", email, "fPass", password));
+    }
+
+    @Override
+    public Optional<User> findById(int id) {
+        return crudRepository.optional("from User where id = :fId",
+                User.class,
+                Map.of("fId", id));
+    }
+
+    @Override
     public Collection<User> findAll() {
-        Session session = sf.openSession();
-        Transaction transaction = session.beginTransaction();
-        try {
-            List<User> result = session.createQuery("from User", User.class)
-                    .getResultList();
-            transaction.commit();
-            return result;
-        } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-        } finally {
-            if (session != null) {
-                session.close();
-            }
-        }
-        return Collections.emptyList();
+        return crudRepository.query("from User", User.class);
     }
 
     @Override
     public boolean deleteById(int id) {
-        Session session = sf.openSession();
-        Transaction transaction = session.beginTransaction();
-        boolean result = false;
         try {
-            result = session.createQuery("delete User where id = :fId")
-                    .setParameter("fId", id)
-                    .executeUpdate() > 0;
-            transaction.commit();
-            return result;
+            crudRepository.run("delete User where id = :fId",
+                    Map.of("fId", id));
+            return true;
         } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-        } finally {
-            if (session != null) {
-                session.close();
-            }
+            e.printStackTrace();
         }
-        return result;
+        return false;
     }
 }

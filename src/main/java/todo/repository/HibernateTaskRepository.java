@@ -1,170 +1,97 @@
 package todo.repository;
 
 import lombok.AllArgsConstructor;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 import todo.model.Task;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Repository
 @AllArgsConstructor
 public class HibernateTaskRepository implements TaskRepository {
-    private final SessionFactory sf;
+    private final CrudRepository crudRepository;
 
     @Override
     public Task save(Task task) {
-        Session session = sf.openSession();
-        Transaction transaction = session.beginTransaction();
         try {
-            session.save(task);
-            transaction.commit();
+            crudRepository.run(session -> session.save(task));
+            return task;
         } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-        } finally {
-            if (session != null) {
-                session.close();
-            }
+            e.printStackTrace();
         }
-        return task;
+        return null;
     }
 
     @Override
     public boolean deleteById(int id) {
-        Session session = sf.openSession();
-        Transaction transaction = session.beginTransaction();
-        boolean result = false;
         try {
-            result = session.createQuery("delete Task where id = :fId")
-                    .setParameter("fId", id)
-                    .executeUpdate() > 0;
-            transaction.commit();
-            return result;
+            crudRepository.run("delete Task where id = :fId", Map.of("fId", id));
+            return true;
         } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-        } finally {
-            if (session != null) {
-                session.close();
-            }
+            e.printStackTrace();
         }
-        return result;
+        return false;
     }
 
     @Override
     public boolean update(Task task) {
-        Session session = sf.openSession();
-        Transaction transaction = session.beginTransaction();
         try {
-            session.update(task);
-            transaction.commit();
+            crudRepository.run(session -> session.update(task));
             return true;
         } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-        } finally {
-            if (session != null) {
-                session.close();
-            }
+            e.printStackTrace();
         }
         return false;
     }
 
     @Override
     public boolean markDone(Task task) {
-        Session session = sf.openSession();
-        Transaction transaction = session.beginTransaction();
-        boolean result = false;
         try {
-            result = session.createQuery(
-                            "update Task set done = :fDone where id = :fId")
-                    .setParameter("fDone", true)
-                    .setParameter("fId", task.getId())
-                    .executeUpdate() > 0;
-            transaction.commit();
-            return result;
+            crudRepository.run("update Task set done = 'true' where id = :fId",
+                    Map.of("fId", task.getId()));
+            return true;
         } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-        } finally {
-            if (session != null) {
-                session.close();
-            }
+            e.printStackTrace();
         }
-        return result;
+        return false;
     }
 
     @Override
     public Optional<Task> findById(int id) {
-        Session session = sf.openSession();
-        Transaction transaction = session.beginTransaction();
         try {
-            Query<Task> query = session.createQuery("from Task where id = :fId", Task.class)
-                    .setParameter("fId", id);
-            transaction.commit();
-            return query.uniqueResultOptional();
+            return crudRepository.optional(
+                    "from Task where id = :fId",
+                    Task.class,
+                    Map.of("fId", id)
+            );
         } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-        } finally {
-            if (session != null) {
-                session.close();
-            }
+            e.printStackTrace();
         }
         return Optional.empty();
     }
 
     @Override
     public Collection<Task> findAll() {
-        Session session = sf.openSession();
-        Transaction transaction = session.beginTransaction();
         try {
-            List<Task> result = session.createQuery("from Task", Task.class)
-                    .getResultList();
-            transaction.commit();
-            return result;
+            return crudRepository.query("from Task",
+                    Task.class);
         } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-        } finally {
-            if (session != null) {
-                session.close();
-            }
+            e.printStackTrace();
         }
         return Collections.emptyList();
     }
 
     @Override
     public Collection<Task> findByStatus(boolean status) {
-        Session session = sf.openSession();
-        Transaction transaction = session.beginTransaction();
         try {
-            List<Task> result = session.createQuery("from Task where done = :fStatus", Task.class)
-                    .setParameter("fStatus", status)
-                    .getResultList();
-            transaction.commit();
-            return result;
+            return crudRepository.query("from Task where done = :fStatus",
+                    Task.class,
+                    Map.of("fStatus", status));
         } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-        } finally {
-            if (session != null) {
-                session.close();
-            }
+            e.printStackTrace();
         }
         return Collections.emptyList();
     }
