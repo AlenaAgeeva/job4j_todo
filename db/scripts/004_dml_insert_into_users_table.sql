@@ -1,1 +1,0 @@
-insert into users (name, email, login, password) values ('admin','admin@example.com','admin','admin');

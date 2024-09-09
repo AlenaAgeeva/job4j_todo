@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.ui.ConcurrentModel;
 import todo.model.Task;
+import todo.model.User;
 import todo.service.SimpleTaskService;
 
 import java.time.LocalDateTime;
@@ -28,9 +29,9 @@ class TaskControllerTest {
     @Test
     void whenGetAllTasksThenGetIndex() {
         var task1 = new Task(1, "title1", "text1",
-                LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), false);
+                LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), false, new User());
         var task2 = new Task(2, "title2", "text2",
-                LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), true);
+                LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), true, new User());
         var model = new ConcurrentModel();
         var expectedTasks = List.of(task1, task2);
         when(taskService.findAll()).thenReturn(expectedTasks);
@@ -49,7 +50,7 @@ class TaskControllerTest {
     @Test
     void whenCreateTaskSuccessfully() {
         var task = new Task(1, "title1", "text1",
-                LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), false);
+                LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), false, new User());
         when(taskService.save(task)).thenReturn(task);
         var viewName = taskController.createTask(task);
         assertThat(viewName).isEqualTo("redirect:/");
@@ -85,7 +86,7 @@ class TaskControllerTest {
     @Test
     void whenGetByIdThenShouldReturnTaskIfExists() {
         var task = new Task(1, "title1", "text1",
-                LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), false);
+                LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), false, new User());
         var model = new ConcurrentModel();
         when(taskService.findById(1)).thenReturn(Optional.of(task));
         var viewName = taskController.getById(model, 1);
@@ -97,7 +98,7 @@ class TaskControllerTest {
     @Test
     void whenUpdateThenShouldRedirectOnSuccessfulUpdate() {
         var task = new Task(1, "title1", "text1",
-                LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), false);
+                LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), false, new User());
         var model = new ConcurrentModel();
         when(taskService.update(task)).thenReturn(true);
         var viewName = taskController.update(task, model);
@@ -107,7 +108,7 @@ class TaskControllerTest {
     @Test
     void whenUpdateThenShouldReturnErrorPageIfTaskNotFound() {
         var task = new Task(1, "title1", "text1",
-                LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), false);
+                LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), false, new User());
         var model = new ConcurrentModel();
         when(taskService.update(task)).thenReturn(false);
         var viewName = taskController.update(task, model);
