@@ -76,7 +76,7 @@ public class HibernateTaskRepository implements TaskRepository {
     @Override
     public Collection<Task> findAll() {
         try {
-            return crudRepository.query("from Task",
+            return crudRepository.query("from Task t JOIN FETCH t.priority",
                     Task.class);
         } catch (Exception e) {
             e.printStackTrace();
@@ -87,7 +87,7 @@ public class HibernateTaskRepository implements TaskRepository {
     @Override
     public Collection<Task> findByStatus(boolean status) {
         try {
-            return crudRepository.query("from Task where done = :fStatus",
+            return crudRepository.query("from Task t JOIN FETCH t.priority where done = :fStatus",
                     Task.class,
                     Map.of("fStatus", status));
         } catch (Exception e) {

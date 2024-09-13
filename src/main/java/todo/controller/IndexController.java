@@ -4,14 +4,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import todo.service.SimpleTaskService;
+import todo.service.TaskService;
 
 @Controller
 @RequestMapping("/")
 public class IndexController {
-    private SimpleTaskService taskService;
+    private final TaskService taskService;
 
-    public IndexController(SimpleTaskService taskService) {
+    public IndexController(TaskService taskService) {
         this.taskService = taskService;
     }
 

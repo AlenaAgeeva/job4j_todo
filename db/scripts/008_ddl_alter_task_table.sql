@@ -1,0 +1,1 @@
+alter table tasks add column priority_id int REFERENCES priorities(id);

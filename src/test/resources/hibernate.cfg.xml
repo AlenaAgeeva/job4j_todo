@@ -15,5 +15,7 @@
 <!--        <property name="hbm2ddl.auto">create-drop</property>-->
 
         <mapping class="todo.model.Task" />
+        <mapping class="todo.model.User" />
+        <mapping class="todo.model.Priority" />
     </session-factory>
 </hibernate-configuration>

@@ -25,6 +25,7 @@
                     <th scope="col">Date</th>
                     <th scope="col">Status</th>
                     <th scope="col">Author</th>
+                    <th scope="col">Priority</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -34,6 +35,7 @@
                     <td th:text="${task.created}"/>
                     <td th:text="${task.done}"/>
                     <td th:text="${task.user.name}"/>
+                    <td th:text="${task.priority.name}"/>
                 </tr>
                 </tbody>
             </table>
